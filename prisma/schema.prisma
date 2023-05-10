@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id Int @default(autoincrement()) @id
+  name String   @unique
+  description String
+  index Int
+  startDate DateTime
+  endDate DateTime?
+
+  giftGroups GiftGroup[]
+}
+
+enum GiftType {
+  TRANSPORTATION
+  FOOD
+  ACOMODATION
+  ACTIVITIY
+}
+
+model GiftGroup {
+  id Int @default(autoincrement()) @id
+  name String @unique
+  type GiftType
+  numMaxGifts Int
+
+  city City @relation(fields: [cityID],references: [id])
+  cityID Int
+
+  gifts Gift[]
+}
+
+enum CurrencyType {
+  USD
+  COP
+}
+
+model Gift {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  memberName String
+  amount Decimal
+  currency CurrencyType
+  isPrivate Boolean @default(false)
+
+  giftGroup GiftGroup @relation(fields: [giftGroupID],references:[id])
+  giftGroupID Int
+
+  @@unique([memberName,giftGroupID])
+}

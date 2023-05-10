@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: prisma
+      MYSQL_PASSWORD: prisma
+      MYSQL_ROOT_PASSWORD: prisma
+      MYSQL_DATABASE: lunamiel-db-dev
+    volumes:
+      - lunamiel-db-dev:/var/lib/mysql
+    ports:
+      - 3306:3306
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+volumes:
+  lunamiel-db-dev:
