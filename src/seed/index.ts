@@ -43,19 +43,19 @@ const cities:ICity[] = [{
 },{
     name:'Dallas, TX',
     description:'desc Dallas',
-    index:9,
+    index:7,
     startDate:new Date(2023,6,22,7,0),
     endDate:new Date(2023,6,23,7,0)
 },{
     name:'Austin, TX',
     description:'Desc Austin',
-    index:10,
+    index:8,
     startDate:new Date(2023,6,24,7,0),
     endDate:new Date(2023,6,29,10,40)
 },{
     name:'Casa',
     description:'Desc bog',
-    index:11,
+    index:9,
     startDate:new Date(2023,6,29,10,40),
     endDate:new Date(2023,6,30,1,10)
 }]
