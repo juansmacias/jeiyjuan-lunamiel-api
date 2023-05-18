@@ -3,7 +3,6 @@ import Hapi from '@hapi/hapi'
 import Boom from '@hapi/boom'
 
 import { Prisma,CurrencyType } from '@prisma/client'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 const giftInputValidator = Joi.object({
     memberName:Joi.string().required(),

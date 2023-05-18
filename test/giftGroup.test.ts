@@ -5,7 +5,7 @@ import Hapi from '@hapi/hapi'
 import { IGift } from '../src/models/IModels'
 import { destroyAllPromise } from './testUtils'
 
-describe('gift plugin', () => {
+describe('gift group plugin', () => {
   let server:Hapi.Server;
 
   async function createCity(cityName:string,index:number) {
@@ -41,8 +41,8 @@ describe('gift plugin', () => {
     })
   }
 
-  async function getLastCity() {
-    return await server.app.prisma.city.findFirst()
+  async function getGiftGroupByName(name:string) {
+    return await server.app.prisma.giftGroup.findFirst({where:{name:name}})
   }
 
   async function createGift(memberName:string,amount:number,currency:CurrencyType,isPrivate:boolean,groupName:string) {
@@ -67,11 +67,11 @@ describe('gift plugin', () => {
 
   beforeAll(async () => {
     server = await createServer()
-    await createCity('city1',1)
-    await createCity('city2',2)
-    await createGift('JSM',100,CurrencyType.USD,false,'city2-Hospedaje')
-    await createGift('JSM',10000,CurrencyType.COP,false,'city1-Hospedaje')
-    await createGift('JSM',10000,CurrencyType.COP,true,'city1-Transporte')
+    await createCity('city3',1)
+    await createCity('city4',2)
+    await createGift('JSM',100,CurrencyType.USD,false,'city3-Hospedaje')
+    await createGift('JSM',10000,CurrencyType.COP,false,'city4-Hospedaje')
+    await createGift('JSM',10000,CurrencyType.COP,true,'city3-Transporte')
   })
 
   afterAll(async () => {
@@ -79,69 +79,23 @@ describe('gift plugin', () => {
     await server.stop()
   })
 
-  test('GET /gifts endpoint returns 200', async () => {
+  test('GET /giftGroups endpoint returns 200', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: '/gifts',
+      url: '/giftGroups',
     })
     expect(res.statusCode).toEqual(200)
     const response = JSON.parse(res.payload)
   })
 
-  test('GET /gifts/{id} endpoint return 200', async () =>{
-    const gift = await getLastGift()
+  test('GET /giftGroups/{id} endpoint return 200', async () =>{
+    const gg = await getGiftGroupByName('city3-Hospedaje')
     const res = await server.inject({
         method: 'GET',
-        url: '/gifts/'+gift?.id,
+        url: '/giftGroups/'+gg?.id,
       })
       expect(res.statusCode).toEqual(200)
       const response = JSON.parse(res.payload)
       
-  })
-
-  test('GET /gifts/member/{memberName} endpoint return 200', async () => {
-    const memberName = 'JSM'
-    const res = await server.inject({
-        method: 'GET',
-        url: '/gifts/member/'+memberName,
-      })
-      expect(res.statusCode).toEqual(200)
-      const response = JSON.parse(res.payload)
-  })
-
-  test('POST /gifts endpoint with message return 200',async () =>{
-    const gift = {
-        memberName:`JAM-${Math.floor(Math.random() * 9999999)}`,
-        amount:100,
-        message:'Hi',
-        giftGroupName: 'city1-Transporte',
-        isPrivate:false,
-        currency: CurrencyType.USD
-    }
-    const res = await server.inject({
-        method: 'POST',
-        url:'/gifts',
-        payload: gift
-    })
-    expect(res.statusCode).toEqual(200)
-    const response = JSON.parse(res.payload) as IGift
-    expect(response.id).toBeTruthy
-  })
-  test('POST /gifts endpoint without message return 200',async () =>{
-    const gift = {
-        memberName:`JAM-${Math.floor(Math.random() * 9999999)}`,
-        amount:100,
-        giftGroupName: 'city1-Transporte',
-        isPrivate:false,
-        currency: CurrencyType.USD
-    }
-    const res = await server.inject({
-        method: 'POST',
-        url:'/gifts',
-        payload: gift
-    })
-    expect(res.statusCode).toEqual(200)
-    const response = JSON.parse(res.payload) as IGift
-    expect(response.id).toBeTruthy
   })
 })
