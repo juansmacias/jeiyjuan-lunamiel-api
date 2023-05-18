@@ -48,6 +48,7 @@ model Gift {
   updatedAt DateTime  @updatedAt
   memberName String
   amount Decimal
+  message String?
   currency CurrencyType
   isPrivate Boolean @default(false)
 
