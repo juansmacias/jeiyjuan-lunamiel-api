@@ -25,6 +25,7 @@ export interface IGift {
     updatedAt?: Date,
     memberName?: string,
     amount?:number,
+    message?:string,
     giftGroupID?: number,
     isPrivate?:boolean,
     currency?:CurrencyType

@@ -2,11 +2,12 @@ import Joi from 'joi'
 import Hapi from '@hapi/hapi'
 import Boom from '@hapi/boom'
 
-import { CurrencyType } from '@prisma/client'
+import { Prisma,CurrencyType } from '@prisma/client'
 
 const giftInputValidator = Joi.object({
     memberName:Joi.string().required(),
     amount:Joi.number().required(),
+    message:Joi.string().optional(),
     giftGroupName: Joi.string().required(),
     isPrivate:Joi.boolean().required(),
     currency:Joi.string().valid(...Object.values(CurrencyType))
@@ -63,6 +64,7 @@ export default GiftPlugin
 interface IGiftInput {
     memberName:string,
     amount:number,
+    message?:string,
     giftGroupName:string,
     isPrivate:boolean,
     currency:string
@@ -125,6 +127,7 @@ async function createGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit)
             data:{
                 memberName: payload.memberName,
                 amount:payload.amount,
+                message:payload.message,
                 isPrivate:payload.isPrivate,
                 giftGroup:{connect:{
                     name:payload.giftGroupName
@@ -136,7 +139,12 @@ async function createGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit)
         return h.response(gift).code(200)
 
     } catch (e) {
-        return Boom.badImplementation('Failed to create gift')
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === 'P2002') {
+                return Boom.badRequest('El usuario no puede dar dos reglos del mismo grupo. Verificar si ya esta registrado el regalo anterior.')
+            }
+        }
+        return Boom.badImplementation('Failed to create gift',e)
     }
 }
 
