@@ -133,6 +133,8 @@ async function createGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit)
                     name:payload.giftGroupName
                 }},
                 currency:getCurrencyType(payload.currency)
+            },include:{
+                giftGroup:true
             }
         })
 

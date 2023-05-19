@@ -5,12 +5,6 @@ import { ICity,IGift } from '../models/IModels'
 
 const prisma = new PrismaClient()
 const cities:ICity[] = [{
-    name:'Bogota, CO',
-    description:'Desc Bogota',
-    index:1,
-    startDate:new Date(2023,6,8,8,19),
-    endDate:new Date(2023,6,8,23,12,0)
-},{
     name:'Cancun',
     description:'Desc Cancun',
     index:2,
@@ -52,12 +46,6 @@ const cities:ICity[] = [{
     index:8,
     startDate:new Date(2023,6,24,7,0),
     endDate:new Date(2023,6,29,10,40)
-},{
-    name:'Casa',
-    description:'Desc bog',
-    index:9,
-    startDate:new Date(2023,6,29,10,40),
-    endDate:new Date(2023,6,30,1,10)
 }]
 
 export async function destroyAllPromise() {
@@ -93,8 +81,19 @@ async function createGift(memberName:string,amount:number,currency:CurrencyType,
 async function main() {
     // await destroyAllPromise()
 
+    const r = await prisma.city.create({
+        data:{
+            name:'Bogota, CO',
+            description:'Aca arranca nuestra aventura. Con toda la energia nos vamos!',
+            index:1,
+            photoUrl:'/static/images/bogota.jpeg',
+            startDate:new Date(2023,5,8,9,19),
+            endDate:new Date(2023,6,8,23,12,0)
+        }
+    })
     for( const city of cities){
         console.log('city: ',city)
+        
         const r = await prisma.city.create({
             data:{
                 name:city.name!,
@@ -102,6 +101,7 @@ async function main() {
                 index:city.index!,
                 startDate:city.startDate!,
                 endDate:city.endDate!,
+                photoUrl:'/static/images/genericCityPic.jpg',
                 giftGroups:{
                     createMany:{
                         data:[{
@@ -126,9 +126,20 @@ async function main() {
             }
         })
     }
+
+
+    const r2 = await prisma.city.create({
+        data:{
+            name:'Regreso a Casa',
+            description:'Colorin Colorado este viaje se ha acabado!',
+            index:9,
+            photoUrl:'/static/images/CasitaBlanca.png',
+            startDate:new Date(2023,6,29,10,40),
+            endDate:new Date(2023,6,30,1,10)
+        }
+    })
   
     await createGift('FAM Macias & Morillo',100000,CurrencyType.COP,'Cancun-Hospedaje',false)
-    await createGift('FAM Macias & Morillo',100,CurrencyType.USD,'Cancun-Actividades',false)
     await createGift('FAM Macias & Morillo',50,CurrencyType.USD,'Cancun-Transporte',true)
 
 }
