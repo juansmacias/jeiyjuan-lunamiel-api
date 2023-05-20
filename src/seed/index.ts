@@ -86,7 +86,7 @@ async function main() {
             name:'Bogota, CO',
             description:'Aca arranca nuestra aventura. Con toda la energia nos vamos!',
             index:1,
-            photoUrl:'/static/images/bogota.jpeg',
+            photoUrl:'https://storage.googleapis.com/fotos-luna-de-miel-app/bogota.jpeg',
             startDate:new Date(2023,5,8,9,19),
             endDate:new Date(2023,6,8,23,12,0)
         }
@@ -101,7 +101,7 @@ async function main() {
                 index:city.index!,
                 startDate:city.startDate!,
                 endDate:city.endDate!,
-                photoUrl:'/static/images/genericCityPic.jpg',
+                photoUrl:'https://storage.googleapis.com/fotos-luna-de-miel-app/genericCityPic.jpg',
                 giftGroups:{
                     createMany:{
                         data:[{
@@ -133,7 +133,7 @@ async function main() {
             name:'Regreso a Casa',
             description:'Colorin Colorado este viaje se ha acabado!',
             index:9,
-            photoUrl:'/static/images/CasitaBlanca.png',
+            photoUrl:'https://storage.googleapis.com/fotos-luna-de-miel-app/CasitaBlanca.png',
             startDate:new Date(2023,6,29,10,40),
             endDate:new Date(2023,6,30,1,10)
         }
