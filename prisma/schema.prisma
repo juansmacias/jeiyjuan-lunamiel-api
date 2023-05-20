@@ -11,6 +11,7 @@ model City {
   id Int @default(autoincrement()) @id
   name String   @unique
   description String
+  photoUrl String?
   index Int
   startDate DateTime
   endDate DateTime?
