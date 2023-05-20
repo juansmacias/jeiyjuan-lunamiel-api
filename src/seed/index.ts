@@ -79,7 +79,7 @@ async function createGift(memberName:string,amount:number,currency:CurrencyType,
 
 // A `main` function so that we can use async/await
 async function main() {
-    // await destroyAllPromise()
+    await destroyAllPromise()
 
     const r = await prisma.city.create({
         data:{
@@ -93,8 +93,64 @@ async function main() {
     })
     for( const city of cities){
         console.log('city: ',city)
-        
-        const r = await prisma.city.create({
+        if(city.name==='Houston, TX'){
+            const r = await prisma.city.create({
+                data:{
+                    name:city.name!,
+                    description:city.description!,
+                    index:city.index!,
+                    startDate:city.startDate!,
+                    endDate:city.endDate!,
+                    photoUrl:'https://storage.googleapis.com/fotos-luna-de-miel-app/genericCityPic.jpg',
+                    giftGroups:{
+                        createMany:{
+                            data:[{
+                                name:city.name!+'-Transporte',
+                                type:GiftType.TRANSPORTATION,
+                                numMaxGifts:5,
+                            },{
+                                name:city.name!+'-Alimentacion',
+                                type:GiftType.FOOD,
+                                numMaxGifts:5,
+                            },{
+                                name:city.name!+'-Actividades',
+                                type:GiftType.ACTIVITIY,
+                                numMaxGifts:15,
+                            }]
+                        }
+                    }
+                }
+            })
+        } else if (city.name==='Austin, TX'){
+            const r = await prisma.city.create({
+                data:{
+                    name:city.name!,
+                    description:city.description!,
+                    index:city.index!,
+                    startDate:city.startDate!,
+                    endDate:city.endDate!,
+                    photoUrl:'https://storage.googleapis.com/fotos-luna-de-miel-app/genericCityPic.jpg',
+                    giftGroups:{
+                        createMany:{
+                            data:[{
+                                name:city.name!+'-Transporte',
+                                type:GiftType.TRANSPORTATION,
+                                numMaxGifts:5,
+                            },{
+                                name:city.name!+'-Alimentacion',
+                                type:GiftType.FOOD,
+                                numMaxGifts:5,
+                            },{
+                                name:city.name!+'-Actividades',
+                                type:GiftType.ACTIVITIY,
+                                numMaxGifts:15,
+                            }]
+                        }
+                    }
+                }
+            })
+        } else {
+            const r = await prisma.city.create({
             data:{
                 name:city.name!,
                 description:city.description!,
@@ -125,6 +181,8 @@ async function main() {
                 }
             }
         })
+        } 
+        
     }
 
 

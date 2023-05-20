@@ -6,7 +6,7 @@ import { Prisma,CurrencyType } from '@prisma/client'
 
 const giftInputValidator = Joi.object({
     memberName:Joi.string().required(),
-    amount:Joi.number().required(),
+    amount:Joi.number().positive().required(),
     message:Joi.string().optional(),
     giftGroupName: Joi.string().required(),
     isPrivate:Joi.boolean().required(),
