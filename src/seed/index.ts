@@ -23,7 +23,7 @@ const cities:ICity[] = [{
     startDate:new Date(2023,6,14,14,0),
     endDate:new Date(2023,6,17,8,0)
 },{
-    name:'Salt Lake City, ',
+    name:'Salt Lake City, UT',
     description:'Desc Salt Lake City',
     index:5,
     startDate:new Date(2023,6,17,10,0),
