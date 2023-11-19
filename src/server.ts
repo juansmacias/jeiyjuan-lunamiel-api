@@ -4,6 +4,7 @@ import prismaPlugin from './plugins/prisma'
 import CityPlugin from './plugins/city'
 import GiftPlugin from './plugins/gift'
 import GiftGroupPlugin from './plugins/giftGroup'
+import EtapaPlugin from './plugins/etapa'
 
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3030,
@@ -35,7 +36,8 @@ export async function createServer(): Promise<Hapi.Server> {
       prismaPlugin,
       CityPlugin,
       GiftPlugin,
-      GiftGroupPlugin
+      GiftGroupPlugin,
+      EtapaPlugin
     ])
 
   await server.initialize()

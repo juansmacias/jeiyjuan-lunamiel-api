@@ -19,11 +19,27 @@ model City {
   giftGroups GiftGroup[]
 }
 
+model Etapa {
+  id Int @default(autoincrement()) @id
+  name String @unique
+  description String
+  photoUrl String?
+  index Int
+
+  giftGroups GiftGroup[]
+}
+
 enum GiftType {
   TRANSPORTATION
   FOOD
   ACOMODATION
   ACTIVITIY
+  DAIPERS
+  CLOTHES
+  TOYS
+  MOTHER
+  FATHER
+  ACCESSORIES
 }
 
 model GiftGroup {
@@ -32,8 +48,11 @@ model GiftGroup {
   type GiftType
   numMaxGifts Int
 
-  city City @relation(fields: [cityID],references: [id])
-  cityID Int
+  city City? @relation(fields: [cityID],references: [id] )
+  cityID Int?
+
+  etapa Etapa? @relation(fields: [etapaID],references: [id] )
+  etapaID Int?
 
   gifts Gift[]
 }
@@ -48,12 +67,14 @@ model Gift {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   memberName String
-  amount Decimal
+  itemName String?
+  urlGift String?
+  amount Decimal?
   message String?
-  currency CurrencyType
+  currency CurrencyType?
   isPrivate Boolean @default(false)
 
-  giftGroup GiftGroup @relation(fields: [giftGroupID],references:[id])
+  giftGroup GiftGroup @relation(fields: [giftGroupID],references:[id], onDelete: Cascade)
   giftGroupID Int
 
   @@unique([memberName,giftGroupID])
