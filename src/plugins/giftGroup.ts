@@ -32,7 +32,8 @@ async function getAllGroupsHandler(request: Hapi.Request, h: Hapi.ResponseToolki
     return await prisma.giftGroup.findMany({
         include:{
             gifts:true,
-            city:true
+            city:true,
+            etapa:true
         }
     })
 
@@ -49,7 +50,8 @@ async function getGroupByIdHandler(request: Hapi.Request, h: Hapi.ResponseToolki
                 id:id
             },include:{
                 gifts:true,
-                city:true
+                city:true,
+                etapa:true
             }
         })
         if(!gg)

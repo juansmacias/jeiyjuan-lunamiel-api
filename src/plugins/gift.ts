@@ -6,9 +6,11 @@ import { Prisma,CurrencyType } from '@prisma/client'
 
 const giftInputValidator = Joi.object({
     memberName:Joi.string().required(),
-    amount:Joi.number().positive().required(),
+    amount:Joi.number().positive().optional(),
     message:Joi.string().optional(),
     giftGroupName: Joi.string().required(),
+    itemName:Joi.string().optional(),
+    urlGift:Joi.string().optional(),
     isPrivate:Joi.boolean().required(),
     currency:Joi.string().valid(...Object.values(CurrencyType))
 })
@@ -45,8 +47,20 @@ const GiftPlugin = {
             }
         },{
             method:'POST',
-            path:'/gifts',
+            path:'/gifts/city',
             handler:createGiftHandler,
+            options:{
+                validate:{
+                    payload:giftInputValidator,
+                    failAction: (request, h, err) => {
+                        throw err
+                      },
+                }
+            }
+        },{
+            method:'POST',
+            path:'/gifts/etapa',
+            handler:createGiftEtapaHandler,
             options:{
                 validate:{
                     payload:giftInputValidator,
@@ -63,16 +77,23 @@ export default GiftPlugin
 
 interface IGiftInput {
     memberName:string,
-    amount:number,
+    amount?:number,
     message?:string,
     giftGroupName:string,
     isPrivate:boolean,
-    currency:string
+    currency?:string,
+    itemName?:string,
+    urlGift?:string,
 }
 
 async function getAllGiftsHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
     const { prisma } = request.server.app
-    return await prisma.gift.findMany({include:{giftGroup:true}})
+    return await prisma.gift.findMany({include:{giftGroup:{
+        include:{
+            city:true,
+            etapa:true
+        }
+    }}})
 }
 
 async function getGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
@@ -85,7 +106,12 @@ async function getGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
                 id: id,
             },
             include:{
-                giftGroup:true
+                giftGroup:{
+                    include:{
+                        city:true,
+                        etapa:true
+                    }
+                }
             }
         })
 
@@ -108,7 +134,12 @@ async function getGiftsByMemberHandler(request: Hapi.Request, h: Hapi.ResponseTo
             where:{
                 memberName:memberName
             },include:{
-                giftGroup:true
+                giftGroup:{
+                    include:{
+                        city:true,
+                        etapa:true
+                    }
+                }
             }
         })
 
@@ -132,7 +163,39 @@ async function createGiftHandler(request: Hapi.Request, h: Hapi.ResponseToolkit)
                 giftGroup:{connect:{
                     name:payload.giftGroupName
                 }},
-                currency:getCurrencyType(payload.currency)
+                currency:getCurrencyType(payload.currency??"COP"),
+            },include:{
+                giftGroup:true
+            }
+        })
+
+        return h.response(gift).code(200)
+
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === 'P2002') {
+                return Boom.badRequest('El usuario no puede dar dos reglos del mismo grupo. Verificar si ya esta registrado el regalo anterior.')
+            }
+        }
+        return Boom.badImplementation('Failed to create gift',e)
+    }
+}
+
+async function createGiftEtapaHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
+    const { prisma } = request.server.app
+    const payload = request.payload as IGiftInput
+
+    try {
+        const gift = await prisma.gift.create({
+            data:{
+                memberName: payload.memberName,
+                itemName:payload.itemName,
+                message:payload.message,
+                isPrivate:payload.isPrivate,
+                giftGroup:{connect:{
+                    name:payload.giftGroupName
+                }},
+                urlGift:payload.urlGift,
             },include:{
                 giftGroup:true
             }

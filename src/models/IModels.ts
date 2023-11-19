@@ -11,6 +11,17 @@ export interface ICity{
     giftGroups?:IGiftGroup[]
 }
 
+export interface IEtapa{
+    id?: number,
+    name?: string,
+    description?:string,
+    index?:number,
+    photoUrl?: string,
+    type?:GiftType, 
+
+    giftGroups?:IGiftGroup[]
+}
+
 export interface IGiftGroup {
     name?:string,
     type?: GiftType,
